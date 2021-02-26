@@ -4,11 +4,12 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"os/exec"
+	"time"
 )
 
 func main() {
-	csvGenerator()
-	// numberCorrect := 0
+	numberCorrect := 0
 
 	// Open the File
 	quizFile, err := os.Open("./quiz.csv")
@@ -22,8 +23,31 @@ func main() {
 	// Read the records and store in variable
 	quiz, _ := reader.ReadAll()
 
-	fmt.Println(quiz)
+	// Iterate through
+	for _, line := range quiz {
+		var answer string
+		fmt.Println("Please enter your answer for", line[0])
+		fmt.Scanln(&answer)
 
+		if answer == line[1] {
+			numberCorrect++
+			fmt.Println("You are correct!!")
+			time.Sleep(1 * time.Second)
+		} else {
+			fmt.Println("You are not correct!")
+			time.Sleep(1 * time.Second)
+		}
+		clearScreen()
+	}
+
+	defer fmt.Println("Your final score was", numberCorrect, "out of", len(quiz))
+
+}
+
+func clearScreen() {
+	cmd := exec.Command("cmd", "/c", "cls")
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 }
 
 func csvGenerator() {
